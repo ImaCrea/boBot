@@ -1,0 +1,24 @@
+{
+  "name": "bobot",
+  "version": "1.0.0",
+  "description": "bobot is MailTape best friend",
+  "main": "boBot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.20.0",
+    "ffmpeg-static": "^2.0.0",
+    "fluent-ffmpeg": "^2.1.0",
+    "leven": "^2.1.0",
+    "line-reader": "^0.4.0",
+    "replacestream": "^4.0.2",
+    "s3-stream-upload": "^2.0.0",
+    "soundcloudr": "^1.1.0",
+    "yamljs": "^0.2.8",
+    "youtube-search": "^1.0.8",
+    "ytdl-core": "^0.9.2"
+  }
+}

@@ -1,6 +1,7 @@
 const trackProcessor = require('./trackProcessor.js')
 const MDReader = require('./MDReader.js')
-
+const fs = require('fs')
+const path = require('path')
 
 // var trackNumber=7
 // trackProcessor(MDfile,trackNumber, function(err, result){
@@ -32,7 +33,10 @@ function episodeProcessor(MDfile,callback) {
 	}, function(){
 		MDReader(MDfile,'episode_URL', function(err, episode_URL) {
 			if (err) return callback(err)
-		    if (errCount==0) callback(null,MDfile+" : done and ready to be commited on Github.\n")
+		    if (errCount==0) {
+                fs.renameSync(MDfile, "./done/"+path.basename(MDfile))
+                callback(null,MDfile+" : done and ready to be commited on Github.\n")
+            }
             if (errCount!=0) callback(errCount,MDfile+" : /!\ there was "+errCount+" error(s) on this episode. Must check\n")
 		})
 	})

@@ -81,17 +81,11 @@ function isSolveURLStreamable (url,callback) {
 
     if (res.statusCode==403) callback(null,false) // detect shitty tracks not streamable or access denied
 
-    res.on('data', (d) => {
-      try {
-        JSON.parse(d,function(key,value){
-          if (key=='streamable'){
-            return callback(null, value)
-          }
-        })
-      } catch (e) {
-          console.log("got an error here with JSON and SC: "+e)
-        }
-
+    res.on('data',(d)=>{
+      JSON.parse(d,function(key,value){
+        if (key=='error_message') callback(404)
+        if (key=='streamable') callback(null, value)
+      })
     })
 
     .on('error', function(err) { // Handle errors
@@ -106,21 +100,17 @@ function isFullTrack (url,callback) {
   https.get(url, function(res) {
     res.setEncoding('utf8');
 
-    res.on('data', (d) => {
-      try {
-        JSON.parse(d,function(key,value){
-          if (key=='duration'){
-            if (value>30000) {
-            return callback(null, true)
-            }
-            else
-            return callback(null,false)
-          } 
-        })
-      } catch (e) {
-          console.log("got an error here with JSON and SC: "+e)
-        }
-
+    res.on('data',(d)=>{
+      JSON.parse(d,function(key,value){
+        if (key=='error_message') callback(404)
+        if (key=='duration'){
+          if (value>30000) {
+          callback(null, true)
+          }
+          else
+          callback(null,false)
+        } 
+      })
     })
 
     .on('error', function(err) { // Handle errors

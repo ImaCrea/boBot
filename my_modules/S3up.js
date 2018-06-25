@@ -15,12 +15,12 @@ function S3up (file,trackNumber,episodeNumber,callback) {
 	var s3 = new S3({
 		accessKeyId: config.S3accessKeyId,
 		secretAccessKey: config.S3secretAccessKey,
-		region: 'eu-west-1'
+		region: 'eu-west-3'
 	});
 
 	var s3params = {
 		ACL: "public-read",
-		Bucket: "mailtapetracks",
+		Bucket: "mailtapesounds",
 		Key: episodeNumber+"/track"+trackNumber+".mp3" 
 	}
 

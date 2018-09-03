@@ -4,3 +4,4 @@ my_modules/config.js
 *.md
 
 *.mp3
+.DS_Store

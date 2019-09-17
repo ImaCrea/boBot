@@ -20,7 +20,7 @@ function YTurl (query,tolerance_max,callback) {
 	setTimeout(function(){
 		search(query, opts, function(err, results) {
 		  if(err) {
-		  	console.log(err)
+		  	//console.log(err)
 		  	return callback(err)}
 		  do {
 			results.forEach (function(result) {

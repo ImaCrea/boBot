@@ -9,16 +9,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.530.0",
+    "@aws-sdk/client-s3": "^3.37.0",
+    "aws-sdk": "^2.1012.0",
     "ffmpeg-static": "^2.6.0",
     "fluent-ffmpeg": "^2.1.2",
     "leven": "^2.1.0",
     "line-reader": "^0.4.0",
+    "replace-in-file": "^6.3.1",
     "replacestream": "^4.0.3",
     "s3-stream-upload": "^2.0.2",
-    "soundcloudr": "^1.1.0",
     "yamljs": "^0.2.10",
     "youtube-search": "^1.1.4",
-    "ytdl-core": "^0.29.7"
+    "ytdl-core": "^4.9.1"
   }
 }

@@ -1,11 +1,11 @@
 // MDUpdater : will update the value of a specified key in the MD file
 
-const lineReader = require('line-reader')
-const YAML = require('yamljs')
-const fs= require('fs')
-var replaceStream = require('replacestream')
+//const lineReader = require('line-reader')
+//const YAML = require('yamljs')
+//const fs= require('fs')
+//var replaceStream = require('replacestream')
 
-
+const replace = require('replace-in-file');
 
 // call architecture
 // var file="../2017-03-05-Max-Future.md"
@@ -18,24 +18,43 @@ var replaceStream = require('replacestream')
 // })
 
 
-function MDUpdater(file, oldValue, newValue,callback) {
+function MDUpdater(file,oldValue,newValue,callback) {
 
-	var file2=file+"b"
+	const options = {
+	  files: file,
+	  from: oldValue,
+	  to: newValue,
+	};
 
-	const readable = fs.createReadStream(file).pipe(replaceStream(oldValue, newValue))
-	const writable = fs.createWriteStream(file2)
-
-	readable.pipe(writable)
-
-	fs.unlink(file,function(err){
-		if (err) callback(err)
-		fs.rename(file2,file,function(err){
-			if (err) callback(err)
-			callback(null,true)
-		})	
-	})
-
+	replace(options)
+	  .then(results => {
+	    //console.log('Replacement results:', results);
+	    callback(null,true);
+	  })
+	  .catch(error => {
+	    //console.error('Error occurred:', error);
+	    callback(error);
+	  });
 }
+
+// function MDUpdater(file, oldValue, newValue,callback) {
+// 	console.log("- URL à remplacer dans "+file+" : "+oldValue+" => "+newValue);
+// 	var file2=file+"b";
+
+// 	const readable = fs.createReadStream(file).pipe(replaceStream(oldValue, newValue))
+// 	const writable = fs.createWriteStream(file2)
+
+// 	readable.pipe(writable)
+
+// 	fs.unlink(file,function(err){
+// 		if (err) callback(err)
+// 		fs.rename(file2,file,function(err){
+// 			if (err) callback(err)
+// 			callback(null,true)
+// 		})	
+// 	})
+
+// }
 
 module.exports = MDUpdater
 

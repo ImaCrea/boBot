@@ -26,65 +26,52 @@ function trackProcessor (MDfile,trackNumber,callback) {
 	var episodeNumber
 	var logPrefix=MDfile+" - track"+trackNumber+" : "
 
-	MDReader(MDfile,'category',function(err, result){
-		if (err) return callback(err)
-		episodeNumber=result
-	})
+	let getEpNumber = new Promise(function(resolve,reject){
+
+		MDReader(MDfile,'category',function(err, result){
+			if (err) reject(new Error(callback(err)));
+			episodeNumber=result;
+			resolve(result);
+		})
+
+	});
+
+
+
+	// MDReader(MDfile,'category',function(err, result){
+	// 	if (err) return callback(err);
+	// 	episodeNumber=result;
+	// })
 
 	// let's get the url and see if it is a SC link or AWS link
-	MDReader(MDfile,'track'+trackNumber+'_link', function(err, trackURL) {
-		if (err) return callback(err)
+	getEpNumber.then(
 
-		URLcheck(trackURL, function(err,trackHoster){
-			if (err) return callback(err)
+		function(result) {
 
-			if (trackHoster==='amazon') {
-				return callback(null,logPrefix+"already streamed from Amazon.")
-			}
+			MDReader(MDfile,'track'+trackNumber+'_link', function(err, trackURL) {
+				if (err) return callback(err)
 
-			if (trackHoster==='soundcloud') {
-				//console.log("Track is streamed from Soundcloud. Let's see if it's streamable or not, attempt a backup and link update in case")
-				
-				isSCstreamable(trackURL,function(err, streamable){
+				URLcheck(trackURL, function(err,trackHoster){
 					if (err) return callback(err)
 
-					if (streamable) {
-						//console.log("Cool it's streamable, let's see if track "+trackNumber+" from episode "+episodeNumber+" is backed up")
-						
-						isOnS3(episodeNumber,trackNumber,function(err,result){
-							if (err) {
-								//console.log("not on S3, let's download it on SC and backup up this gem")
-								
-								SCdl(trackURL,function(err, trackDownloaded){
-									if (err) return callback(err)						
-									//console.log("cool track is downloaded from SC, let's back it up.")
-									S3up(trackDownloaded,trackNumber, episodeNumber,function(err,trackURLS3){
-										if (err) return callback(err)
-										//console.log("cool track "+trackNumber+" from episode "+episodeNumber+" is now backed up! Stream it on "+trackURLS3)
-										return callback(null,logPrefix+"backed up on S3")
-									})
-
-								})
-							}
-							
-							if (result)	{
-								//console.log("All good, track "+trackNumber+" from episode "+episodeNumber+" is streamable from SC and already backed up. Chillax")
-								return callback(null,logPrefix+"track ok and already backed up")
-							}
-						})
+					if (trackHoster==='wasabi') {
+						return callback(null,logPrefix+"already streamed from Wasabi.")
 					}
-				  	
-				  	else {
-				  		//console.log("this track is not streamable. Let's see if we have a back up, and if not, let's DL it on YT")
-				  		
+
+					if (trackHoster==='soundcloud') {				
+						// no more check on SC since we can't connect to it for the moment
+						 
+						//console.log("- Found SC link to replace "+trackURL);
+
+						// TODO : Rajouter un callback avec la récupération du numéro de l'épisode
+
 				  		isOnS3(episodeNumber,trackNumber,function(err,backupURL){
-				  			if (err) {
-				  				//console.log("not streamable and not on S3, let's download it on YT, back it up and update MDfile")
-				  				
+
+				  			if (err) {		  				
 				  				MDReader(MDfile,'track'+trackNumber+'_title', function(err, trackTitle) {
 				  					if (err) return callback(err)
 
-				  					//console.log("Looking on YT for "+trackTitle)
+				  					console.log("Looking on YT for "+trackTitle)
 					  				YTurl(trackTitle, YTSearchTolerance, function(err,YTURL) {
 					  					if (err) return callback("Error with "+trackTitle+" in "+MDfile+" : "+err)
 					  					
@@ -111,20 +98,22 @@ function trackProcessor (MDfile,trackNumber,callback) {
 
 				  			}
 				  			else {
-					  			//console.log("not streamable but already backed up. let's update MDfile with good URL")
+					  			//console.log("- Found backupURL, let's update MDfile with backup URL instead of SC")
+					  			
 					  			MDUpdater(MDfile,trackURL,backupURL,function(err){
 					  				if (err) return callback(err)
-					  				//console.log("OK: not streamable track was updated with backup URL.")
 					  				return callback(null,logPrefix+"fixed! (updated with backup)")
 					  			})
 					  		}
 
 				  		})
-				  	}
-				})
 
-			}
-		})
-	})
+					}
+				})
+			})
+		}
+
+	);
+	
 }
 

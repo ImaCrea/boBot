@@ -35,10 +35,10 @@ function isSCstreamable(track_url,callback) {
           if (err) return console.error(err)
           if (fullTrack) {
             callback(null,true) // track streamable et fait bien plus de 30s.
-            //console.log("track fait plus de 30s!")
+            console.log("track fait plus de 30s!")
           }
           else {
-            //console.log("track fait moins de 30s, attention!")
+            console.log("track fait moins de 30s, attention!")
             callback(null,null)
           }
         })
@@ -69,7 +69,7 @@ function SCResolve(url,client_id,callback){
       callback(err)
     })
 
-    //if (res.statusCode==404) callback("Error 404 while trying to reach SC for "+url)
+    if (res.statusCode==404) callback("Error 404 while trying to reach SC for "+url)
 
   })
 }

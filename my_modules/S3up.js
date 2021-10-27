@@ -1,7 +1,9 @@
 const fs = require('fs');
-var UploadStream = require("s3-stream-upload")
-var S3 = require("aws-sdk").S3
+var UploadStream = require("s3-stream-upload");
+const S3 = require("aws-sdk/clients/s3");
+const AWS = require('aws-sdk');
 var config = require("./config.js")
+const wasabiEndpoint = new AWS.Endpoint('s3.eu-central-1.wasabisys.com');
 
 // upload to S3
 // call architecture
@@ -13,18 +15,19 @@ var config = require("./config.js")
 function S3up (file,trackNumber,episodeNumber,callback) {
 
 	var s3 = new S3({
+		endpoint: wasabiEndpoint,
 		accessKeyId: config.S3accessKeyId,
 		secretAccessKey: config.S3secretAccessKey,
-		region: 'eu-west-3'
+		region: 'eu-central-1'
 	});
 
 	var s3params = {
 		ACL: "public-read",
-		Bucket: "mailtapesounds",
+		Bucket: "mtsounds",
 		Key: episodeNumber+"/track"+trackNumber+".mp3" 
 	}
 
-	var fileURL = "https://"+s3params.Bucket+".s3.amazonaws.com/"+s3params.Key
+	var fileURL = "https://"+s3params.Bucket+".eu-central-1.wasabisys.com/"+s3params.Key
 
 	fs.createReadStream(file)
 	.pipe(UploadStream(s3, s3params))

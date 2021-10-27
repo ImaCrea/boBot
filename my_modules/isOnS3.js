@@ -27,7 +27,7 @@ function isOnS3 (episodeNumber,trackNumber,callback) {
 			Key: episodeNumber+"/track"+trackNumber+".mp3"
 		}
 
-	var fileURL = "https://"+s3params.Bucket+".eu-central-1.wasabisys.com/"+s3params.Key
+	var fileURL = "https://"+s3params.Bucket+".s3.eu-central-1.wasabisys.com/"+s3params.Key
 
 	s3.getObject(s3params,function(err,result){
 		console.log ("isOnS3: "+fileURL);
